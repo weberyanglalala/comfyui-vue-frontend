@@ -6,6 +6,7 @@ import { useLayout } from '@/layout/composables/layout';
 import { useToast } from 'primevue/usetoast';
 import { ComfyUIService } from '@/service/ComfyUIService';
 import { watch, ref, computed } from 'vue';
+import { retryWithDelay } from '@/helpers/retryWithDelay';
 
 const promptOptions = [
     {
@@ -96,35 +97,55 @@ const createStyleChangeImage = async () => {
 };
 
 const getPromptResult = async () => {
-    const maxRetries = 5;
-    const pollingInterval = 5000; // 5 seconds
-
-    const poll = async (retryCount) => {
-        if (retryCount >= maxRetries) {
-            throw new Error('Maximum retries reached');
-        }
-
-        try {
-            const result = await ComfyUIService.getSwapStyleImage(promptId.value);
-            if (result.body.is_success !== true) {
-                throw new Error('Result not ready');
-            }
-            return result;
-        } catch (error) {
-            toast.add({
-                severity: 'info',
-                summary: '提示',
-                detail: `嘗試第 ${retryCount + 1} 取得產圖結果. 將在 ${pollingInterval / 1000} 秒後重新取得`,
-                life: 3000
-            });
-            await new Promise((resolve) => setTimeout(resolve, pollingInterval));
-            return poll(retryCount + 1);
-        }
-    };
+    // const maxRetries = 5;
+    // const pollingInterval = 5000; // 5 seconds
+    //
+    // const poll = async (retryCount) => {
+    //     if (retryCount >= maxRetries) {
+    //         throw new Error('Maximum retries reached');
+    //     }
+    //
+    //     try {
+    //         const result = await ComfyUIService.getSwapStyleImage(promptId.value);
+    //         if (result.body.is_success !== true) {
+    //             throw new Error('Result not ready');
+    //         }
+    //         return result;
+    //     } catch (error) {
+    //         toast.add({
+    //             severity: 'info',
+    //             summary: '提示',
+    //             detail: `嘗試第 ${retryCount + 1} 取得產圖結果. 將在 ${pollingInterval / 1000} 秒後重新取得`,
+    //             life: 3000
+    //         });
+    //         await new Promise((resolve) => setTimeout(resolve, pollingInterval));
+    //         return poll(retryCount + 1);
+    //     }
+    // };
 
     try {
         formLoading();
-        const result = await poll(0);
+        const result = await retryWithDelay(
+            async () => {
+                const response = await ComfyUIService.getSwapStyleImage(promptId.value);
+                if (response.body.is_success !== true) {
+                    throw new Error('Result not ready');
+                }
+                return response;
+            },
+            {
+                maxRetries: 5,
+                delay: 5000,
+                onRetry: (retryCount) => {
+                    toast.add({
+                        severity: 'info',
+                        summary: '提示',
+                        detail: `嘗試第 ${retryCount} 次失敗。將在 ${5000 / 1000} 秒後重新嘗試`,
+                        life: 3000
+                    });
+                }
+            }
+        );
         styleChangeImageUrl.value = result.body.public_url;
         getPromptResultState.value = false;
         toast.add({ severity: 'success', summary: '成功', detail: '取得結果成功', life: 3000 });
