@@ -179,14 +179,14 @@ watch([getPrimary, getSurface, isDarkTheme], () => {});
                 <label for="promptId" class="mb-2">Prompt Id</label>
                 <InputText v-model="promptId" id="promptId" rows="4" disabled />
             </div>
-            <div class="flex flex-wrap gap-2">
-                <Button label="Get Prompt Id" icon="pi pi-check" :disabled="!createImageButtonState" @click="createStyleChangeImage" />
-                <Button label="Try Get Prompt Result" icon="pi pi-check" :disabled="!getPromptResultState" @click="getPromptResult" />
-            </div>
             <div class="flex flex-wrap" v-if="styleChangeImageUrl">
                 <label for="style-change-image" class="w-full mb-2">Style Change Image</label>
                 <Image :src="styleChangeImageUrl" alt="Image" width="250" preview />
                 <InputText v-model="styleChangeImageUrl" class="w-full" readonly />
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <Button label="Get Prompt Id" icon="pi pi-check" :disabled="!createImageButtonState" @click="createStyleChangeImage" />
+                <Button label="Try Get Prompt Result" icon="pi pi-check" :disabled="!getPromptResultState" @click="getPromptResult" />
             </div>
         </div>
 
