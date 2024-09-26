@@ -9,24 +9,28 @@ import { watch, ref, computed } from 'vue';
 
 const promptOptions = [
     {
-        label: 'Pop Art Style (Andy Warhol)',
-        value: 'Convert the portrait into a Pop Art masterpiece in the style of Andy Warhol. Use bold, flat colors, strong outlines, and repetitive patterns. Incorporate vibrant, contrasting hues and a screen-printed aesthetic.'
+        label: 'Custom Style',
+        value: 'Custom Style Here....'
     },
     {
-        label: 'Byzantine Mosaic Style',
-        value: 'Convert the portrait into a Pop Art masterpiece in the style of Andy Warhol. Use bold, flat colors, strong outlines, and repetitive patterns. Incorporate vibrant, contrasting hues and a screen-printed aesthetic.'
+        label: 'Minimalist Scandinavian Style',
+        value: 'Convert the furniture image into a sleek Minimalist Scandinavian design. Use clean lines, light wood tones, soft neutral colors, and an uncluttered aesthetic to evoke simplicity and functionality.'
     },
     {
-        label: 'Impressionist Style (Claude Monet)',
-        value: 'Transform the portrait into an Impressionist masterpiece in the style of Claude Monet. Use short, thick strokes of paint to capture the essence of the subject rather than the details. Incorporate vibrant colors and a sense of movement.'
+        label: 'Industrial Loft Style',
+        value: 'Transform the furniture image into an Industrial Loft design. Incorporate raw, unfinished textures like exposed brick, steel, and reclaimed wood. Use darker tones and an edgy, utilitarian look with visible hardware and mechanical elements.'
     },
     {
-        label: 'Cubist Style (Pablo Picasso)',
-        value: 'Transform the portrait into a Cubist masterpiece in the style of Pablo Picasso. Use geometric shapes, overlapping planes, and multiple perspectives to create an abstract representation of the subject. Incorporate bold colors and a fractured composition.'
+        label: 'Mid-Century Modern Style',
+        value: 'Convert the furniture image into a Mid-Century Modern design. Use organic shapes, tapered legs, and vibrant hues such as mustard yellow, teal, and olive green. Combine sleek lines with natural materials like walnut wood for a retro vibe.'
     },
     {
-        label: 'Surrealist Style (Salvador Dali)',
-        value: 'Transform the portrait into a Surrealist masterpiece in the style of Salvador Dali. Use dreamlike imagery, unexpected juxtapositions, and distorted forms to create a surreal and imaginative interpretation of the subject. Incorporate symbolic elements and a sense of mystery.'
+        label: 'Bohemian Chic Style',
+        value: 'Transform the furniture image into a Bohemian Chic design. Incorporate vibrant patterns, eclectic textures, and warm, earthy colors. Use natural materials like rattan, macramé, and woven fabrics to create a laid-back, artistic aesthetic.'
+    },
+    {
+        label: 'Art Deco Glamour Style',
+        value: 'Convert the furniture image into an Art Deco Glamour design. Incorporate luxurious materials like velvet, marble, and gold accents. Use bold geometric patterns, rich jewel tones, and sleek, symmetrical lines to evoke opulence and sophistication.'
     }
 ];
 
@@ -73,17 +77,15 @@ const onFileSelect = async (event) => {
     }
 };
 
-const createStyleChangeImage = async () => {
+const createFurnitureDesign = async () => {
     const body = {
-        image_name: sourceImageName.value,
+        image_path: sourceImageName.value,
         style: stylePrompt.value,
-        seed: seed.value,
-        width: width.value,
-        height: height.value
+        seed: seed.value
     };
     try {
         formLoading();
-        const result = await ComfyUIService.createStyleSwapImage(body);
+        const result = await ComfyUIService.createFurnitureDesignImage(body);
         promptId.value = result.body.prompt_id;
         getPromptResultState.value = true;
         toast.add({ severity: 'success', summary: '成功', detail: result.message, life: 3000 });
@@ -105,7 +107,7 @@ const getPromptResult = async () => {
         }
 
         try {
-            const result = await ComfyUIService.getSwapStyleImage(promptId.value);
+            const result = await ComfyUIService.getFurnitureDesignImage(promptId.value);
             if (result.body.is_success !== true) {
                 throw new Error('Result not ready');
             }
@@ -114,7 +116,7 @@ const getPromptResult = async () => {
             toast.add({
                 severity: 'info',
                 summary: '提示',
-                detail: `嘗試第 ${retryCount + 1} 取得產圖結果. 將在 ${pollingInterval / 1000} 秒後重新取得`,
+                detail: `嘗試第 ${retryCount + 1} 失敗. 將在 ${pollingInterval / 1000} 秒後重新取得結果`,
                 life: 3000
             });
             await new Promise((resolve) => setTimeout(resolve, pollingInterval));
@@ -145,7 +147,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {});
     <Fluid>
         <Toast />
         <div class="card flex flex-col gap-4 w-full">
-            <div class="font-semibold text-xl">Style Change</div>
+            <div class="font-semibold text-xl">Furniture Design</div>
             <div class="flex flex-wrap">
                 <label for="width" class="mb-2">Width</label>
                 <InputNumber v-model="width" id="width" rows="4" />
@@ -184,7 +186,7 @@ watch([getPrimary, getSurface, isDarkTheme], () => {});
                 <InputText v-model="styleChangeImageUrl" class="w-full" readonly />
             </div>
             <div class="flex flex-wrap gap-2">
-                <Button label="Get Prompt Id" icon="pi pi-check" :disabled="!createImageButtonState" @click="createStyleChangeImage" />
+                <Button label="Get Prompt Id" icon="pi pi-check" :disabled="!createImageButtonState" @click="createFurnitureDesign" />
                 <Button label="Try Get Prompt Result" icon="pi pi-check" :disabled="!getPromptResultState" @click="getPromptResult" />
             </div>
         </div>

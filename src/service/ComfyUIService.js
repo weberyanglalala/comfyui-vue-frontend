@@ -15,5 +15,11 @@ export const ComfyUIService = {
     },
     getSwapStyleImage(promptId) {
         return fetchWrapper.get(`${API_ROUTES.GET_STYLE_SWAP_IMAGE}?promptId=${promptId}`);
+    },
+    createFurnitureDesignImage(body) {
+        return fetchWrapper.post(`${API_ROUTES.CREATE_FURNITURE_DESIGN_IMAGE}`, body);
+    },
+    getFurnitureDesignImage(promptId) {
+        return fetchWrapper.get(`${API_ROUTES.GET_FURNITURE_DESIGN_IMAGE}?promptId=${promptId}`);
     }
 };

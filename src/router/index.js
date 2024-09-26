@@ -9,6 +9,11 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
+                    path: '/comfyui/furnituredesign',
+                    name: 'comfyui-furnituredesign',
+                    component: () => import('@/views/pages/comfyui/FunitureDesign.vue')
+                },
+                {
                     path: '/comfyui/stylechange',
                     name: 'comfyui-stylechange',
                     component: () => import('@/views/pages/comfyui/StyleChange.vue')
