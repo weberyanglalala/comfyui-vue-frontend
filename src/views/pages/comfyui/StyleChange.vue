@@ -106,9 +106,10 @@ const getPromptResult = async () => {
 
         try {
             const result = await ComfyUIService.getSwapStyleImage(promptId.value);
-            if (result.isSuccess !== true) {
+            if (result.body.is_success !== true) {
                 throw new Error('Result not ready');
             }
+            console.log(result);
             return result;
         } catch (error) {
             toast.add({
@@ -125,7 +126,7 @@ const getPromptResult = async () => {
     try {
         formLoading();
         const result = await poll(0);
-        styleChangeImageUrl.value = result.publicUrl;
+        styleChangeImageUrl.value = result.body.public_url;
         getPromptResultState.value = false;
         toast.add({ severity: 'success', summary: '成功', detail: '取得結果成功', life: 3000 });
     } catch (error) {
