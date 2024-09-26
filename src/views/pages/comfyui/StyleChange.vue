@@ -7,6 +7,7 @@ import { useToast } from 'primevue/usetoast';
 import { ComfyUIService } from '@/service/ComfyUIService';
 import { watch, ref, computed } from 'vue';
 import { retryWithDelay } from '@/helpers/retryWithDelay';
+import { getImageDimensions } from '@/helpers/imageHelper';
 
 const promptOptions = [
     {
@@ -58,13 +59,14 @@ const formLoaded = () => {
 const onFileSelect = async (event) => {
     formLoading();
     const file = event.files[0];
-    const reader = new FileReader();
     try {
+        const imageDimension = await getImageDimensions(file);
+        width.value = imageDimension.width;
+        height.value = imageDimension.height;
         const uploadResult = await ComfyUIService.uploadStyleChangeImage(file);
         sourceImageName.value = uploadResult.name;
         const sourceImageUrlResult = await ComfyUIService.getPublicImageUrl(sourceImageName.value);
         sourceImageUrl.value = sourceImageUrlResult.publicUrl;
-        reader.readAsDataURL(file);
         toast.add({ severity: 'success', summary: '成功', detail: '圖片上傳成功', life: 3000 });
     } catch (error) {
         console.error(error);
@@ -97,32 +99,6 @@ const createStyleChangeImage = async () => {
 };
 
 const getPromptResult = async () => {
-    // const maxRetries = 5;
-    // const pollingInterval = 5000; // 5 seconds
-    //
-    // const poll = async (retryCount) => {
-    //     if (retryCount >= maxRetries) {
-    //         throw new Error('Maximum retries reached');
-    //     }
-    //
-    //     try {
-    //         const result = await ComfyUIService.getSwapStyleImage(promptId.value);
-    //         if (result.body.is_success !== true) {
-    //             throw new Error('Result not ready');
-    //         }
-    //         return result;
-    //     } catch (error) {
-    //         toast.add({
-    //             severity: 'info',
-    //             summary: '提示',
-    //             detail: `嘗試第 ${retryCount + 1} 取得產圖結果. 將在 ${pollingInterval / 1000} 秒後重新取得`,
-    //             life: 3000
-    //         });
-    //         await new Promise((resolve) => setTimeout(resolve, pollingInterval));
-    //         return poll(retryCount + 1);
-    //     }
-    // };
-
     try {
         formLoading();
         const result = await retryWithDelay(

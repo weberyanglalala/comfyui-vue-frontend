@@ -6,6 +6,7 @@ import { useLayout } from '@/layout/composables/layout';
 import { useToast } from 'primevue/usetoast';
 import { ComfyUIService } from '@/service/ComfyUIService';
 import { retryWithDelay } from '@/helpers/retryWithDelay';
+import { getImageDimensions } from '@/helpers/imageHelper';
 import { watch, ref, computed } from 'vue';
 
 const promptOptions = [
@@ -62,13 +63,14 @@ const formLoaded = () => {
 const onFileSelect = async (event) => {
     formLoading();
     const file = event.files[0];
-    const reader = new FileReader();
     try {
+        const imageDimension = await getImageDimensions(file);
+        width.value = imageDimension.width;
+        height.value = imageDimension.height;
         const uploadResult = await ComfyUIService.uploadStyleChangeImage(file);
         sourceImageName.value = uploadResult.name;
         const sourceImageUrlResult = await ComfyUIService.getPublicImageUrl(sourceImageName.value);
         sourceImageUrl.value = sourceImageUrlResult.publicUrl;
-        reader.readAsDataURL(file);
         toast.add({ severity: 'success', summary: '成功', detail: '圖片上傳成功', life: 3000 });
     } catch (error) {
         console.error(error);
