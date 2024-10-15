@@ -19,6 +19,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/comfyui/StyleChange.vue')
                 },
                 {
+                    path: '/comfyui/characterchange',
+                    name: 'comfyui-characterchange',
+                    component: () => import('@/views/pages/comfyui/CharacterChange.vue')
+                },
+                {
                     path: '/',
                     name: 'dashboard',
                     component: () => import('@/views/Dashboard.vue')

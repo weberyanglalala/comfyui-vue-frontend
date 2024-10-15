@@ -9,7 +9,8 @@ const model = ref([
         items: [
             { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
             { label: 'Furniture Design', icon: 'pi pi-fw pi-home', to: '/comfyui/furnituredesign' },
-            { label: 'Style Change', icon: 'pi pi-fw pi-home', to: '/comfyui/stylechange' }
+            { label: 'Style Change', icon: 'pi pi-fw pi-home', to: '/comfyui/stylechange' },
+            { label: 'Character Change', icon: 'pi pi-fw pi-home', to: '/comfyui/characterchange' }
         ]
     },
     {
