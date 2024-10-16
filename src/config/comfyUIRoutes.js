@@ -8,5 +8,7 @@ export const API_ROUTES = {
     CREATE_FURNITURE_DESIGN_IMAGE: `${API_BASE_URL}/api/FurnitureDesign/CreateFurnitureDesign`,
     GET_FURNITURE_DESIGN_IMAGE: `${API_BASE_URL}/api/FurnitureDesign/GetFurnitureDesignByPromptId`,
     CREATE_CHARACTER_PHOTO_IMAGES: `${API_BASE_URL}/api/CharacterPhoto/CreateCharacterPhoto`,
-    GET_CHARACTER_PHOTO_IMAGES: `${API_BASE_URL}/api/CharacterPhoto/GetCharacterPhotosByPromptId`
+    GET_CHARACTER_PHOTO_IMAGES: `${API_BASE_URL}/api/CharacterPhoto/GetCharacterPhotosByPromptId`,
+    LOGIN: `${API_BASE_URL}/api/Auth/Login`,
+    REGISTER: `${API_BASE_URL}/api/Auth/Register`
 };

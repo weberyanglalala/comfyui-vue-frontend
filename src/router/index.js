@@ -1,5 +1,6 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -131,11 +132,15 @@ const router = createRouter({
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
-
         {
             path: '/auth/login',
             name: 'login',
             component: () => import('@/views/pages/auth/Login.vue')
+        },
+        {
+            path: '/auth/signup',
+            name: 'signup',
+            component: () => import('@/views/pages/auth/SignUp.vue')
         },
         {
             path: '/auth/access',
@@ -150,4 +155,15 @@ const router = createRouter({
     ]
 });
 
+router.beforeEach(async (to) => {
+    // redirect to login page if not logged in and trying to access a restricted page
+    const publicPages = ['/auth/login', '/auth/signup', '/auth/error', '/auth/access'];
+    const authRequired = !publicPages.includes(to.path);
+    const auth = useAuthStore();
+
+    if (authRequired && !auth.token) {
+        auth.returnUrl = to.fullPath;
+        return '/auth/login';
+    }
+});
 export default router;

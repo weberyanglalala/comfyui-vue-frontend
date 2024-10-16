@@ -1,6 +1,14 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
+import { useAuthStore } from '@/stores/authStore';
+import router from '@/router';
+
+const logout = async () => {
+    const authStore = useAuthStore();
+    authStore.removeToken();
+    await router.push({ name: 'login' });
+};
 
 const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 </script>
@@ -71,6 +79,10 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-user"></i>
                         <span>Profile</span>
+                    </button>
+                    <button type="button" class="layout-topbar-action" @click="logout">
+                        <i class="pi pi-sign-out"></i>
+                        <span>Logout</span>
                     </button>
                 </div>
             </div>

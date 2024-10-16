@@ -3,21 +3,10 @@ import FloatingConfigurator from '@/components/FloatingConfigurator.vue';
 import { computed, ref } from "vue";
 import { ComfyUIService } from '@/service/ComfyUIService';
 import { useToast } from 'primevue/usetoast';
-import { useAuthStore } from '@/stores/authStore';
 import router from '@/router';
 
 const email = ref('');
 const password = ref('');
-
-const isValidEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-};
-
-// Computed property to check if the form is valid
-const isValidForm = computed(() => {
-    return isValidEmail(email.value) && password.value.length >= 6 && password.value.length <= 50;
-});
 
 const isLoading = ref(false);
 const toast = useToast();
@@ -30,32 +19,41 @@ const formLoaded = () => {
     isLoading.value = false;
 };
 
-const login = async () => {
+const isValidEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+};
+
+// Computed property to check if the form is valid
+const isValidForm = computed(() => {
+    return isValidEmail(email.value) && password.value.length >= 6 && password.value.length <= 50;
+});
+
+const signUp = async () => {
     const body = {
         email: email.value,
         password: password.value
     };
     try {
         formLoading();
-        const result = await ComfyUIService.login(body);
-        const token = result.body.token;
-
-        const authStore = useAuthStore();
-        authStore.setToken(token);
-        await router.push({ name: 'dashboard' });
-        toast.add({ severity: 'success', summary: 'Login Success', life: 3000 });
+        const result = await ComfyUIService.register(body);
+        if (result.isSuccess) {
+            toast.add({ severity: 'success', summary: '成功', detail: '註冊成功，待認證使用者', life: 3000 });
+            await router.push({ name: 'login' });
+        }
     } catch (error) {
-        console.error(error);
-        toast.add({ severity: 'error', summary: '錯誤', detail: 'Login Failed', life: 3000 });
+        toast.add({ severity: 'error', summary: '錯誤', detail: '註冊失敗', life: 3000 });
     } finally {
+        password.value = '';
+        email.value = '';
         formLoaded();
     }
 };
 </script>
 
 <template>
-    <FloatingConfigurator />
     <Toast />
+    <FloatingConfigurator />
     <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
         <div class="flex flex-col items-center justify-center">
             <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
@@ -79,18 +77,17 @@ const login = async () => {
                             </g>
                         </svg>
                         <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to PrimeLand!</div>
-                        <span class="text-muted-color font-medium">登入</span>
+                        <span class="text-muted-color font-medium">註冊</span>
                     </div>
 
                     <div class="mb-2">
                         <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
                         <InputText id="email1" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-8" v-model="email" />
-
                         <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
                         <Password id="password1" v-model="password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
-                        <Button label="登入" class="w-full" :disabled="!isValidForm" @click="login"></Button>
+                        <Button label="註冊" class="w-full" @click="signUp" :disabled="!isValidForm"></Button>
                     </div>
-                    <Button label="前往註冊頁" class="w-full" @click="router.push({ name: 'signup' })" severity="secondary"></Button>
+                    <Button label="前往登入頁" class="w-full" @click="router.push({ name: 'login' })" severity="secondary"></Button>
                 </div>
             </div>
         </div>

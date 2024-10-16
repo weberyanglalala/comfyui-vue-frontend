@@ -27,5 +27,11 @@ export const ComfyUIService = {
     },
     getCharacterDesignImages(promptId) {
         return fetchWrapper.get(`${API_ROUTES.GET_CHARACTER_PHOTO_IMAGES}?promptId=${promptId}`);
+    },
+    login(body) {
+        return fetchWrapper.post(`${API_ROUTES.LOGIN}`, body);
+    },
+    register(body) {
+        return fetchWrapper.post(`${API_ROUTES.REGISTER}`, body);
     }
 };
