@@ -10,5 +10,6 @@ export const API_ROUTES = {
     CREATE_CHARACTER_PHOTO_IMAGES: `${API_BASE_URL}/api/CharacterPhoto/CreateCharacterPhoto`,
     GET_CHARACTER_PHOTO_IMAGES: `${API_BASE_URL}/api/CharacterPhoto/GetCharacterPhotosByPromptId`,
     LOGIN: `${API_BASE_URL}/api/Auth/Login`,
-    REGISTER: `${API_BASE_URL}/api/Auth/Register`
+    REGISTER: `${API_BASE_URL}/api/Auth/Register`,
+    DIFY_CREATE_TRAVEL_PRODUCT: `${API_BASE_URL}/api/Dify/CreateTravelProductByProductName`
 };

@@ -10,6 +10,11 @@ const router = createRouter({
             component: AppLayout,
             children: [
                 {
+                    path: '/comfyui/travelproduct',
+                    name: 'comfyui-travelproduct',
+                    component: () => import('@/views/pages/comfyui/TravelProduct.vue')
+                },
+                {
                     path: '/comfyui/furnituredesign',
                     name: 'comfyui-furnituredesign',
                     component: () => import('@/views/pages/comfyui/FunitureDesign.vue')
